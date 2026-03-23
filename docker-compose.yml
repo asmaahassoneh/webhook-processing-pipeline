@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:17
+    container_name: webhook_pipeline_db
+    environment:
+      POSTGRES_DB: webhook_pipeline
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2004
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migrate:
+    build: .
+    depends_on:
+      - db
+    env_file:
+      - .env.docker
+    command: sh -c "npm run migrate"
+
+  api:
+    build: .
+    depends_on:
+      - db
+      - migrate
+    env_file:
+      - .env.docker
+    command: sh -c "npm run dev"
+    ports:
+      - "3000:3000"
+
+  worker:
+    build: .
+    depends_on:
+      - db
+      - migrate
+    env_file:
+      - .env.docker
+    command: sh -c "npm run worker"
+
+volumes:
+  postgres_data:

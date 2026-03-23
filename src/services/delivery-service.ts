@@ -9,7 +9,11 @@ export async function deliverToSubscriber(params: {
 }) {
   const maxAttempts = 3;
 
-  for (let attemptNumber = 1; attemptNumber <= maxAttempts; attemptNumber += 1) {
+  for (
+    let attemptNumber = 1;
+    attemptNumber <= maxAttempts;
+    attemptNumber += 1
+  ) {
     try {
       const response = await fetch(params.subscriber.target_url, {
         method: "POST",
@@ -70,6 +74,6 @@ export async function deliverToSubscriber(params: {
   }
 
   throw new Error(
-    `Delivery failed for subscriber ${params.subscriber.target_url}`
+    `Delivery failed for subscriber ${params.subscriber.target_url}`,
   );
 }

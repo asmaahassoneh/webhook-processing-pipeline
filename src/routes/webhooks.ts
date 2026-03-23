@@ -5,11 +5,11 @@ const router = Router();
 
 router.post("/:sourceKey", async (req, res) => {
   try {
-    const payload =
-      req.body && typeof req.body === "object" ? req.body : {};
+    const payload = req.body && typeof req.body === "object" ? req.body : {};
 
     const rawBody =
-      (req as typeof req & { rawBody?: string }).rawBody ?? JSON.stringify(payload);
+      (req as typeof req & { rawBody?: string }).rawBody ??
+      JSON.stringify(payload);
 
     const signature = req.header("x-webhook-signature") ?? undefined;
 

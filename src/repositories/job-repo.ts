@@ -22,7 +22,13 @@ export async function insertJob(job: {
     VALUES ($1, $2, $3, $4, 0, $5, NOW())
     RETURNING *
     `,
-    [job.id, job.pipelineId, job.status, job.inputPayload, DEFAULT_MAX_ATTEMPTS]
+    [
+      job.id,
+      job.pipelineId,
+      job.status,
+      job.inputPayload,
+      DEFAULT_MAX_ATTEMPTS,
+    ],
   );
 
   return result.rows[0];
@@ -34,7 +40,9 @@ export async function getJobById(jobId: string) {
 }
 
 export async function getAllJobs() {
-  const result = await pool.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
+  const result = await pool.query(
+    `SELECT * FROM jobs ORDER BY created_at DESC`,
+  );
   return result.rows;
 }
 
@@ -45,7 +53,7 @@ export async function getJobsByPipelineId(pipelineId: string) {
     WHERE pipeline_id = $1
     ORDER BY created_at DESC
     `,
-    [pipelineId]
+    [pipelineId],
   );
 
   return result.rows;
@@ -62,7 +70,7 @@ export async function requeueStaleProcessingJobs() {
     WHERE status = 'processing'
       AND locked_at IS NOT NULL
       AND locked_at < NOW() - INTERVAL '2 minutes'
-    `
+    `,
   );
 }
 
@@ -84,7 +92,7 @@ export async function claimNextPendingJob() {
       FOR UPDATE SKIP LOCKED
     )
     RETURNING *
-    `
+    `,
   );
 
   return result.rows[0] ?? null;
@@ -92,7 +100,7 @@ export async function claimNextPendingJob() {
 
 export async function markJobCompleted(
   jobId: string,
-  processedPayload: Record<string, unknown>
+  processedPayload: Record<string, unknown>,
 ) {
   const result = await pool.query(
     `
@@ -106,7 +114,7 @@ export async function markJobCompleted(
     WHERE id = $1
     RETURNING *
     `,
-    [jobId, processedPayload]
+    [jobId, processedPayload],
   );
 
   return result.rows[0];
@@ -134,7 +142,7 @@ export async function markJobForRetry(jobId: string, errorMessage: string) {
     WHERE id = $1
     RETURNING *
     `,
-    [jobId, errorMessage]
+    [jobId, errorMessage],
   );
 
   return result.rows[0];
@@ -154,7 +162,7 @@ export async function retryJobById(jobId: string) {
       AND status = 'failed'
     RETURNING *
     `,
-    [jobId]
+    [jobId],
   );
 
   return result.rows[0] ?? null;
@@ -170,7 +178,7 @@ export async function getJobMetrics() {
       COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_jobs,
       COUNT(*) FILTER (WHERE status = 'failed')::int AS failed_jobs
     FROM jobs
-    `
+    `,
   );
 
   return result.rows[0];

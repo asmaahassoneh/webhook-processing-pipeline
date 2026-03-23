@@ -34,7 +34,7 @@ export async function insertDeliveryAttempt(attempt: {
       attempt.responseStatus,
       attempt.responseBody,
       attempt.errorMessage,
-    ]
+    ],
   );
 
   return result.rows[0];
@@ -48,7 +48,7 @@ export async function getDeliveryAttemptsByJobId(jobId: string) {
     WHERE job_id = $1
     ORDER BY created_at ASC
     `,
-    [jobId]
+    [jobId],
   );
 
   return result.rows;

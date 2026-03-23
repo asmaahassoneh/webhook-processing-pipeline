@@ -7,7 +7,7 @@ import {
   getMetrics,
   getPipelineJobs,
   getPipelines,
-  retryJob
+  retryJob,
 } from "./api";
 
 const defaultMetrics = {
@@ -15,7 +15,7 @@ const defaultMetrics = {
   pending_jobs: 0,
   processing_jobs: 0,
   completed_jobs: 0,
-  failed_jobs: 0
+  failed_jobs: 0,
 };
 
 export default function App() {
@@ -34,14 +34,15 @@ export default function App() {
     name: "",
     actionType: "uppercase_text",
     field: "text",
-    suffix: " - processed",
+    suffix: " - completed",
     webhookSecret: "",
-    subscriberUrl: ""
+    subscriberUrl: "",
   });
 
   const selectedPipeline = useMemo(
-    () => pipelines.find((pipeline) => pipeline.id === selectedPipelineId) ?? null,
-    [pipelines, selectedPipelineId]
+    () =>
+      pipelines.find((pipeline) => pipeline.id === selectedPipelineId) ?? null,
+    [pipelines, selectedPipelineId],
   );
 
   async function loadDashboard() {
@@ -52,7 +53,7 @@ export default function App() {
       const [pipelinesData, jobsData, metricsData] = await Promise.all([
         getPipelines(),
         getJobs(),
-        getMetrics()
+        getMetrics(),
       ]);
 
       setPipelines(pipelinesData);
@@ -97,7 +98,8 @@ export default function App() {
       const actionConfig =
         form.actionType === "append_suffix"
           ? { field: form.field, suffix: form.suffix }
-          : form.actionType === "uppercase_text" || form.actionType === "reverse_text"
+          : form.actionType === "uppercase_text" ||
+              form.actionType === "reverse_text"
             ? { field: form.field }
             : { includeTimestamp: true, includeKeyCount: true };
 
@@ -108,16 +110,16 @@ export default function App() {
         webhookSecret: form.webhookSecret.trim() || null,
         subscribers: form.subscriberUrl.trim()
           ? [{ targetUrl: form.subscriberUrl.trim() }]
-          : []
+          : [],
       });
 
       setForm({
         name: "",
         actionType: "uppercase_text",
         field: "text",
-        suffix: " - processed",
+        suffix: "- completed",
         webhookSecret: "",
-        subscriberUrl: ""
+        subscriberUrl: "",
       });
 
       await loadDashboard();
@@ -194,6 +196,49 @@ export default function App() {
         <button className="nav-btn refresh" onClick={loadDashboard}>
           Refresh
         </button>
+
+        <button
+          onClick={async () => {
+            let payload;
+
+            switch (selectedPipeline.actionType) {
+              case "uppercase_text":
+                payload = { text: "hello world!" };
+                break;
+
+              case "reverse_text":
+                payload = { text: "hello" };
+                break;
+
+              case "append_suffix":
+                payload = { text: "hello world!" };
+                break;
+
+              case "add_metadata":
+                payload = {
+                  message: "hello world!",
+                  user: "Asmaa",
+                };
+                break;
+
+              default:
+                payload = { text: "hello world!" };
+            }
+
+            await fetch(
+              `http://localhost:3000/webhooks/${selectedPipeline.sourceKey}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+              },
+            );
+          }}
+        >
+          Test Webhook
+        </button>
       </aside>
 
       <main className="content">
@@ -212,7 +257,11 @@ export default function App() {
 
             <section className="card">
               <h2>Recent Jobs</h2>
-              <JobTable jobs={jobs.slice(0, 8)} onViewAttempts={loadAttempts} onRetry={handleRetryJob} />
+              <JobTable
+                jobs={jobs.slice(0, 8)}
+                onViewAttempts={loadAttempts}
+                onRetry={handleRetryJob}
+              />
             </section>
           </>
         )}
@@ -228,7 +277,10 @@ export default function App() {
                   <input
                     value={form.name}
                     onChange={(event) =>
-                      setForm((current) => ({ ...current, name: event.target.value }))
+                      setForm((current) => ({
+                        ...current,
+                        name: event.target.value,
+                      }))
                     }
                     required
                   />
@@ -241,7 +293,7 @@ export default function App() {
                     onChange={(event) =>
                       setForm((current) => ({
                         ...current,
-                        actionType: event.target.value
+                        actionType: event.target.value,
                       }))
                     }
                   >
@@ -258,7 +310,10 @@ export default function App() {
                     <input
                       value={form.field}
                       onChange={(event) =>
-                        setForm((current) => ({ ...current, field: event.target.value }))
+                        setForm((current) => ({
+                          ...current,
+                          field: event.target.value,
+                        }))
                       }
                     />
                   </label>
@@ -270,7 +325,10 @@ export default function App() {
                     <input
                       value={form.suffix}
                       onChange={(event) =>
-                        setForm((current) => ({ ...current, suffix: event.target.value }))
+                        setForm((current) => ({
+                          ...current,
+                          suffix: event.target.value,
+                        }))
                       }
                     />
                   </label>
@@ -283,7 +341,7 @@ export default function App() {
                     onChange={(event) =>
                       setForm((current) => ({
                         ...current,
-                        webhookSecret: event.target.value
+                        webhookSecret: event.target.value,
                       }))
                     }
                     placeholder="optional"
@@ -297,7 +355,7 @@ export default function App() {
                     onChange={(event) =>
                       setForm((current) => ({
                         ...current,
-                        subscriberUrl: event.target.value
+                        subscriberUrl: event.target.value,
                       }))
                     }
                     placeholder="https://..."
@@ -342,10 +400,19 @@ export default function App() {
               {selectedPipeline ? (
                 <div className="details">
                   <h3>Selected Pipeline</h3>
-                  <p><strong>ID:</strong> {selectedPipeline.id}</p>
-                  <p><strong>Source Key:</strong> {selectedPipeline.sourceKey}</p>
-                  <p><strong>Action:</strong> {selectedPipeline.actionType}</p>
-                  <p><strong>Subscribers:</strong> {selectedPipeline.subscribers.length}</p>
+                  <p>
+                    <strong>ID:</strong> {selectedPipeline.id}
+                  </p>
+                  <p>
+                    <strong>Source Key:</strong> {selectedPipeline.sourceKey}
+                  </p>
+                  <p>
+                    <strong>Action:</strong> {selectedPipeline.actionType}
+                  </p>
+                  <p>
+                    <strong>Subscribers:</strong>{" "}
+                    {selectedPipeline.subscribers.length}
+                  </p>
 
                   <h3>Recent Jobs</h3>
                   <JobTable
@@ -363,7 +430,11 @@ export default function App() {
           <div className="grid two-col">
             <section className="card">
               <h2>All Jobs</h2>
-              <JobTable jobs={jobs} onViewAttempts={loadAttempts} onRetry={handleRetryJob} />
+              <JobTable
+                jobs={jobs}
+                onViewAttempts={loadAttempts}
+                onRetry={handleRetryJob}
+              />
             </section>
 
             <section className="card">
@@ -373,20 +444,35 @@ export default function App() {
                 <p>Select a job to view attempts.</p>
               ) : (
                 <div className="details">
-                  <p><strong>Job ID:</strong> {selectedJob.id}</p>
-                  <p><strong>Status:</strong> {selectedJob.status}</p>
-                  <p><strong>Pipeline ID:</strong> {selectedJob.pipelineId}</p>
-                  <p><strong>Attempts:</strong> {selectedJob.attemptsCount}/{selectedJob.maxAttempts}</p>
-                  <p><strong>Error:</strong> {selectedJob.errorMessage || "None"}</p>
+                  <p>
+                    <strong>Job ID:</strong> {selectedJob.id}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {selectedJob.status}
+                  </p>
+                  <p>
+                    <strong>Pipeline ID:</strong> {selectedJob.pipelineId}
+                  </p>
+                  <p>
+                    <strong>Attempts:</strong> {selectedJob.attemptsCount}/
+                    {selectedJob.maxAttempts}
+                  </p>
+                  <p>
+                    <strong>Error:</strong> {selectedJob.errorMessage || "None"}
+                  </p>
 
                   <div className="json-block">
                     <h3>Input Payload</h3>
-                    <pre>{JSON.stringify(selectedJob.inputPayload, null, 2)}</pre>
+                    <pre>
+                      {JSON.stringify(selectedJob.inputPayload, null, 2)}
+                    </pre>
                   </div>
 
                   <div className="json-block">
                     <h3>Processed Payload</h3>
-                    <pre>{JSON.stringify(selectedJob.processedPayload, null, 2)}</pre>
+                    <pre>
+                      {JSON.stringify(selectedJob.processedPayload, null, 2)}
+                    </pre>
                   </div>
 
                   <h3>Delivery Attempts</h3>
@@ -398,13 +484,21 @@ export default function App() {
                         <div key={attempt.id} className="attempt-item">
                           <div>
                             <strong>Attempt #{attempt.attemptNumber}</strong>
-                            <span className={attempt.status === "success" ? "badge success" : "badge failed"}>
+                            <span
+                              className={
+                                attempt.status === "success"
+                                  ? "badge success"
+                                  : "badge failed"
+                              }
+                            >
                               {attempt.status}
                             </span>
                           </div>
                           <p>Status Code: {attempt.responseStatus ?? "N/A"}</p>
                           <p>Error: {attempt.errorMessage || "None"}</p>
-                          <p>At: {new Date(attempt.createdAt).toLocaleString()}</p>
+                          <p>
+                            At: {new Date(attempt.createdAt).toLocaleString()}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -454,7 +548,9 @@ function JobTable({ jobs, onViewAttempts, onRetry }) {
               </td>
               <td className="mono">{job.id.slice(0, 8)}...</td>
               <td className="mono">{job.pipelineId.slice(0, 8)}...</td>
-              <td>{job.attemptsCount}/{job.maxAttempts}</td>
+              <td>
+                {job.attemptsCount}/{job.maxAttempts}
+              </td>
               <td>{new Date(job.createdAt).toLocaleString()}</td>
               <td className="actions">
                 <button onClick={() => onViewAttempts(job)}>Details</button>

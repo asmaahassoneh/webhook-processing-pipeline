@@ -1,6 +1,6 @@
 export function reverseText(
   payload: Record<string, unknown>,
-  config: Record<string, unknown> = {}
+  config: Record<string, unknown> = {},
 ) {
   const field =
     typeof config.field === "string" && config.field.trim()
@@ -11,6 +11,6 @@ export function reverseText(
 
   return {
     ...payload,
-    [field]: value.split("").reverse().join(""),
+    [field]: Array.from(value).reverse().join(""),
   };
 }

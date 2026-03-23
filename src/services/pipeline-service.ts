@@ -82,7 +82,7 @@ export async function getPipeline(pipelineId: string) {
 
 export async function updatePipeline(
   pipelineId: string,
-  input: UpdatePipelineInput
+  input: UpdatePipelineInput,
 ) {
   const existing = await getPipelineById(pipelineId);
 

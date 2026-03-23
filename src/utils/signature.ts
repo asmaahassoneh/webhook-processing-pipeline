@@ -1,9 +1,6 @@
 import crypto from "crypto";
 
-export function createHmacSignature(
-  secret: string,
-  rawBody: string
-): string {
+export function createHmacSignature(secret: string, rawBody: string): string {
   return crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
 }
 

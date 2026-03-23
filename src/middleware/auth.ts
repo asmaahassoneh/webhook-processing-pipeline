@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export function requireApiKey(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export function requireApiKey(req: Request, res: Response, next: NextFunction) {
   const expectedKey = process.env.API_KEY;
 
   if (!expectedKey) {

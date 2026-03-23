@@ -1,6 +1,6 @@
 export function uppercaseText(
   payload: Record<string, unknown>,
-  config: Record<string, unknown> = {}
+  config: Record<string, unknown> = {},
 ) {
   const field =
     typeof config.field === "string" && config.field.trim()

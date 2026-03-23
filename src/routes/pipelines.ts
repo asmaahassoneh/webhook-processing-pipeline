@@ -28,7 +28,7 @@ const pipelineSchema = z.object({
     .array(
       z.object({
         targetUrl: z.string().url(),
-      })
+      }),
     )
     .default([]),
 });
@@ -42,7 +42,7 @@ const updatePipelineSchema = z.object({
     .array(
       z.object({
         targetUrl: z.string().url(),
-      })
+      }),
     )
     .optional(),
 });

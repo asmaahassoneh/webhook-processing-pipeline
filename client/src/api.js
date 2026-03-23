@@ -8,8 +8,8 @@ async function request(path, options = {}) {
       headers: {
         "Content-Type": "application/json",
         "x-api-key": API_KEY,
-        ...(options.headers ?? {})
-      }
+        ...(options.headers ?? {}),
+      },
     });
 
     if (!response.ok) {
@@ -42,13 +42,13 @@ export async function getPipelineJobs(id) {
 export async function createPipeline(input) {
   return request("/pipelines", {
     method: "POST",
-    body: JSON.stringify(input)
+    body: JSON.stringify(input),
   });
 }
 
 export async function deletePipeline(id) {
   return request(`/pipelines/${id}`, {
-    method: "DELETE"
+    method: "DELETE",
   });
 }
 
@@ -62,7 +62,7 @@ export async function getJobAttempts(id) {
 
 export async function retryJob(id) {
   return request(`/jobs/${id}/retry`, {
-    method: "POST"
+    method: "POST",
   });
 }
 

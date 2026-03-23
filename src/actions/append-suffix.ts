@@ -1,6 +1,6 @@
 export function appendSuffix(
   payload: Record<string, unknown>,
-  config: Record<string, unknown> = {}
+  config: Record<string, unknown> = {},
 ) {
   const field =
     typeof config.field === "string" && config.field.trim()
@@ -8,9 +8,7 @@ export function appendSuffix(
       : "text";
 
   const suffix =
-    typeof config.suffix === "string"
-      ? config.suffix
-      : " - processed";
+    typeof config.suffix === "string" ? config.suffix : " - processed";
 
   const value = typeof payload[field] === "string" ? payload[field] : "";
 

@@ -7,7 +7,7 @@ import { ActionType } from "../types/pipeline.js";
 export function executeAction(
   actionType: ActionType,
   payload: Record<string, unknown>,
-  actionConfig: Record<string, unknown> = {}
+  actionConfig: Record<string, unknown> = {},
 ) {
   switch (actionType) {
     case "uppercase_text":

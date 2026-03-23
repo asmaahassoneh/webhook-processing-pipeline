@@ -105,7 +105,7 @@ export async function processNextJob() {
     const processedPayload = executeAction(
       pipeline.action_type,
       job.input_payload,
-      pipeline.action_config ?? {}
+      pipeline.action_config ?? {},
     );
 
     for (const subscriber of subscribers) {

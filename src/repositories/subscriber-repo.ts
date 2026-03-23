@@ -5,7 +5,7 @@ export async function insertSubscribers(
     id: string;
     pipelineId: string;
     targetUrl: string;
-  }[]
+  }[],
 ) {
   if (subscribers.length === 0) {
     return;
@@ -25,7 +25,7 @@ export async function insertSubscribers(
     INSERT INTO subscribers (id, pipeline_id, target_url)
     VALUES ${placeholders.join(", ")}
     `,
-    values
+    values,
   );
 }
 
@@ -36,12 +36,14 @@ export async function getSubscribersByPipelineId(pipelineId: string) {
     WHERE pipeline_id = $1
     ORDER BY created_at ASC
     `,
-    [pipelineId]
+    [pipelineId],
   );
 
   return result.rows;
 }
 
 export async function deleteSubscribersByPipelineId(pipelineId: string) {
-  await pool.query(`DELETE FROM subscribers WHERE pipeline_id = $1`, [pipelineId]);
+  await pool.query(`DELETE FROM subscribers WHERE pipeline_id = $1`, [
+    pipelineId,
+  ]);
 }

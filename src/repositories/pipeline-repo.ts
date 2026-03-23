@@ -28,7 +28,7 @@ export async function insertPipeline(pipeline: {
       pipeline.actionType,
       pipeline.actionConfig,
       pipeline.webhookSecret,
-    ]
+    ],
   );
 
   return result.rows[0];
@@ -36,20 +36,22 @@ export async function insertPipeline(pipeline: {
 
 export async function getAllPipelines() {
   const result = await pool.query(
-    `SELECT * FROM pipelines ORDER BY created_at DESC`
+    `SELECT * FROM pipelines ORDER BY created_at DESC`,
   );
   return result.rows;
 }
 
 export async function getPipelineById(id: string) {
-  const result = await pool.query(`SELECT * FROM pipelines WHERE id = $1`, [id]);
+  const result = await pool.query(`SELECT * FROM pipelines WHERE id = $1`, [
+    id,
+  ]);
   return result.rows[0] ?? null;
 }
 
 export async function getPipelineBySourceKey(sourceKey: string) {
   const result = await pool.query(
     `SELECT * FROM pipelines WHERE source_key = $1`,
-    [sourceKey]
+    [sourceKey],
   );
   return result.rows[0] ?? null;
 }
@@ -61,7 +63,7 @@ export async function updatePipelineById(
     actionType: string;
     actionConfig: Record<string, unknown>;
     webhookSecret: string | null;
-  }
+  },
 ) {
   const result = await pool.query(
     `
@@ -80,7 +82,7 @@ export async function updatePipelineById(
       updates.actionType,
       updates.actionConfig,
       updates.webhookSecret,
-    ]
+    ],
   );
 
   return result.rows[0] ?? null;
@@ -89,7 +91,7 @@ export async function updatePipelineById(
 export async function deletePipelineById(id: string) {
   const result = await pool.query(
     `DELETE FROM pipelines WHERE id = $1 RETURNING *`,
-    [id]
+    [id],
   );
 
   return result.rows[0] ?? null;

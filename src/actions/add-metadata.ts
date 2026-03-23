@@ -1,6 +1,6 @@
 export function addMetadata(
   payload: Record<string, unknown>,
-  config: Record<string, unknown> = {}
+  config: Record<string, unknown> = {},
 ) {
   const includeTimestamp =
     typeof config.includeTimestamp === "boolean"
@@ -8,9 +8,7 @@ export function addMetadata(
       : true;
 
   const includeKeyCount =
-    typeof config.includeKeyCount === "boolean"
-      ? config.includeKeyCount
-      : true;
+    typeof config.includeKeyCount === "boolean" ? config.includeKeyCount : true;
 
   return {
     original: payload,

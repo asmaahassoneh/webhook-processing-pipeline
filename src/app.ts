@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import jobsRouter from "./routes/jobs.js";
 import metricsRouter from "./routes/metrics.js";
@@ -7,10 +8,16 @@ import webhooksRouter from "./routes/webhooks.js";
 export const app = express();
 
 app.use(
+  cors({
+    origin: "http://localhost:5173"
+  })
+);
+
+app.use(
   express.json({
     verify: (req, _res, buf) => {
       (req as express.Request & { rawBody?: string }).rawBody = buf.toString();
-    },
+    }
   })
 );
 

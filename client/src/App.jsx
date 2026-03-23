@@ -203,15 +203,24 @@ export default function App() {
 
             switch (selectedPipeline.actionType) {
               case "uppercase_text":
-                payload = { text: "hello world!" };
+                payload = {
+                  text: "hello world",
+                  user: "Asmaa",
+                };
                 break;
 
               case "reverse_text":
-                payload = { text: "hello" };
+                payload = {
+                  text: "hello",
+                  user: "Asmaa",
+                };
                 break;
 
               case "append_suffix":
-                payload = { text: "hello world!" };
+                payload = {
+                  text: "hello world",
+                  user: "Asmaa",
+                };
                 break;
 
               case "add_metadata":
